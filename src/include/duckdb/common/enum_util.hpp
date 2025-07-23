@@ -64,6 +64,8 @@ enum class AlterViewType : uint8_t;
 
 enum class AppenderType : uint8_t;
 
+enum class ArrowArrayPhysicalType : uint8_t;
+
 enum class ArrowDateTimeType : uint8_t;
 
 enum class ArrowOffsetSize : uint8_t;
@@ -240,6 +242,10 @@ enum class MapInvalidReason : uint8_t;
 
 enum class MemoryTag : uint8_t;
 
+enum class MergeActionCondition : uint8_t;
+
+enum class MergeActionType : uint8_t;
+
 enum class MetaPipelineType : uint8_t;
 
 enum class MetricsType : uint8_t;
@@ -390,13 +396,19 @@ enum class TemporaryBufferSize : uint64_t;
 
 enum class TemporaryCompressionLevel : int;
 
+enum class ThreadPinMode : uint8_t;
+
 enum class TimestampCastResult : uint8_t;
 
 enum class TransactionModifierType : uint8_t;
 
 enum class TransactionType : uint8_t;
 
+enum class TupleDataNestednessType : uint8_t;
+
 enum class TupleDataPinProperties : uint8_t;
+
+enum class TupleDataValidityType : uint8_t;
 
 enum class UndoFlags : uint32_t;
 
@@ -468,6 +480,9 @@ const char* EnumUtil::ToChars<AlterViewType>(AlterViewType value);
 
 template<>
 const char* EnumUtil::ToChars<AppenderType>(AppenderType value);
+
+template<>
+const char* EnumUtil::ToChars<ArrowArrayPhysicalType>(ArrowArrayPhysicalType value);
 
 template<>
 const char* EnumUtil::ToChars<ArrowDateTimeType>(ArrowDateTimeType value);
@@ -734,6 +749,12 @@ template<>
 const char* EnumUtil::ToChars<MemoryTag>(MemoryTag value);
 
 template<>
+const char* EnumUtil::ToChars<MergeActionCondition>(MergeActionCondition value);
+
+template<>
+const char* EnumUtil::ToChars<MergeActionType>(MergeActionType value);
+
+template<>
 const char* EnumUtil::ToChars<MetaPipelineType>(MetaPipelineType value);
 
 template<>
@@ -959,6 +980,9 @@ template<>
 const char* EnumUtil::ToChars<TemporaryCompressionLevel>(TemporaryCompressionLevel value);
 
 template<>
+const char* EnumUtil::ToChars<ThreadPinMode>(ThreadPinMode value);
+
+template<>
 const char* EnumUtil::ToChars<TimestampCastResult>(TimestampCastResult value);
 
 template<>
@@ -968,7 +992,13 @@ template<>
 const char* EnumUtil::ToChars<TransactionType>(TransactionType value);
 
 template<>
+const char* EnumUtil::ToChars<TupleDataNestednessType>(TupleDataNestednessType value);
+
+template<>
 const char* EnumUtil::ToChars<TupleDataPinProperties>(TupleDataPinProperties value);
+
+template<>
+const char* EnumUtil::ToChars<TupleDataValidityType>(TupleDataValidityType value);
 
 template<>
 const char* EnumUtil::ToChars<UndoFlags>(UndoFlags value);
@@ -1051,6 +1081,9 @@ AlterViewType EnumUtil::FromString<AlterViewType>(const char *value);
 
 template<>
 AppenderType EnumUtil::FromString<AppenderType>(const char *value);
+
+template<>
+ArrowArrayPhysicalType EnumUtil::FromString<ArrowArrayPhysicalType>(const char *value);
 
 template<>
 ArrowDateTimeType EnumUtil::FromString<ArrowDateTimeType>(const char *value);
@@ -1317,6 +1350,12 @@ template<>
 MemoryTag EnumUtil::FromString<MemoryTag>(const char *value);
 
 template<>
+MergeActionCondition EnumUtil::FromString<MergeActionCondition>(const char *value);
+
+template<>
+MergeActionType EnumUtil::FromString<MergeActionType>(const char *value);
+
+template<>
 MetaPipelineType EnumUtil::FromString<MetaPipelineType>(const char *value);
 
 template<>
@@ -1542,6 +1581,9 @@ template<>
 TemporaryCompressionLevel EnumUtil::FromString<TemporaryCompressionLevel>(const char *value);
 
 template<>
+ThreadPinMode EnumUtil::FromString<ThreadPinMode>(const char *value);
+
+template<>
 TimestampCastResult EnumUtil::FromString<TimestampCastResult>(const char *value);
 
 template<>
@@ -1551,7 +1593,13 @@ template<>
 TransactionType EnumUtil::FromString<TransactionType>(const char *value);
 
 template<>
+TupleDataNestednessType EnumUtil::FromString<TupleDataNestednessType>(const char *value);
+
+template<>
 TupleDataPinProperties EnumUtil::FromString<TupleDataPinProperties>(const char *value);
+
+template<>
+TupleDataValidityType EnumUtil::FromString<TupleDataValidityType>(const char *value);
 
 template<>
 UndoFlags EnumUtil::FromString<UndoFlags>(const char *value);

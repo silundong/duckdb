@@ -449,7 +449,6 @@ option(DISABLE_STR_INLINE "Debug setting: disable inlining of strings" FALSE)
 option(DISABLE_MEMORY_SAFETY "Debug setting: disable memory access checks at runtime" FALSE)
 option(DISABLE_ASSERTIONS "Debug setting: disable assertions" FALSE)
 option(ALTERNATIVE_VERIFY "Debug setting: use alternative verify mode" FALSE)
-option(PREFETCH_ALL_PARQUET_FILES "Debug setting: always prefetch all Parquet files" FALSE)
 option(DISABLE_POINTER_SALT "Debug setting: verify correct results without pointer salt" FALSE)
 option(RUN_SLOW_VERIFIERS "Debug setting: enable a more extensive set of verifiers" FALSE)
 option(DESTROY_UNPINNED_BLOCKS "Debug setting: destroy unpinned buffer-managed blocks" FALSE)
@@ -538,10 +537,6 @@ endif()
 
 if(ALTERNATIVE_VERIFY)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDUCKDB_ALTERNATIVE_VERIFY")
-endif()
-
-if(PREFETCH_ALL_PARQUET_FILES)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDUCKDB_PREFETCH_ALL_PARQUET_FILES")
 endif()
 
 if(DISABLE_POINTER_SALT)
@@ -1206,14 +1201,6 @@ function(duckdb_extension_load NAME)
     return()
   endif()
 
-  # Running this function in whitelist mode will only build the extensions in the whitelist
-  if (${DUCKDB_EXTENSION_LOAD_WHITELIST_SET})
-    list (FIND DUCKDB_EXTENSION_LOAD_WHITELIST ${EXTENSION_NAME_LOWERCASE} _index)
-    if (${_index} EQUAL -1)
-      return()
-    endif()
-  endif()
-
   list (FIND SKIP_EXTENSIONS ${EXTENSION_NAME_LOWERCASE} _index)
   if (${_index} GREATER -1)
     return()
@@ -1297,21 +1284,20 @@ foreach(EXT IN LISTS DUCKDB_EXTENSION_NAMES)
   endif()
 endforeach()
 
+set(EXTENSION_CONFIG_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.github/config/extensions/")
+
 # Load extensions passed through cmake config var
 foreach(EXT IN LISTS BUILD_EXTENSIONS)
   if(NOT "${EXT}" STREQUAL "")
-    duckdb_extension_load(${EXT})
+    if (EXISTS "${EXTENSION_CONFIG_BASE_DIR}/${EXT}.cmake")
+      # out-of-tree extension: load cmake file
+      include("${EXTENSION_CONFIG_BASE_DIR}/${EXT}.cmake")
+    else()
+      # in-tree or non-existent extension: load it
+      duckdb_extension_load(${EXT})
+    endif()
   endif()
 endforeach()
-
-if (NOT "${CORE_EXTENSIONS}" STREQUAL "")
-    SET(DUCKDB_EXTENSION_LOAD_WHITELIST ${CORE_EXTENSIONS})
-    SET(DUCKDB_EXTENSION_LOAD_WHITELIST_SET 1)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/.github/config/out_of_tree_extensions.cmake)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/.github/config/in_tree_extensions.cmake)
-    SET(DUCKDB_EXTENSION_LOAD_WHITELIST "")
-    SET(DUCKDB_EXTENSION_LOAD_WHITELIST_SET 0)
-endif()
 
 # Custom extension configs passed in DUCKDB_EXTENSION_CONFIGS parameter
 foreach(DUCKDB_EXTENSION_CONFIG IN LISTS DUCKDB_EXTENSION_CONFIGS)
@@ -1518,7 +1504,7 @@ if(NOT DUCKDB_EXPLICIT_PLATFORM)
   add_custom_command(
           OUTPUT ${PROJECT_BINARY_DIR}/duckdb_platform_out
           DEPENDS duckdb_platform_binary
-          COMMAND duckdb_platform_binary > ${PROJECT_BINARY_DIR}/duckdb_platform_out || ( echo "Provide explicit DUCKDB_PLATFORM=your_target_arch to avoid build-type detection of the platform" && exit 1 )
+	  COMMAND $<TARGET_FILE:duckdb_platform_binary> > ${PROJECT_BINARY_DIR}/duckdb_platform_out || ( echo "Provide explicit DUCKDB_PLATFORM=your_target_arch to avoid build-type detection of the platform" && exit 1 )
           WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
           )
 else()
